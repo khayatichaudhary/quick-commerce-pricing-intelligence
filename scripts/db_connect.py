@@ -7,7 +7,7 @@ DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_NAME = "quick_commerce"
 DB_USER = "postgres"
-DB_PASSWORD = "password_here"  
+DB_PASSWORD = "ginnivinni100@" 
 
 def test_connection():
     try:
