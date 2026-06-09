@@ -1,17 +1,14 @@
 import psycopg2
 from sqlalchemy import create_engine
 import pandas as pd
-import os
 
-DB_PASSWORD = os.environ.get("DB_PASSWORD", "your_password_here")
-#database connection details
-DB_HOST ="localhost"
-DB_PORT="5432"
-DB_NAME="quick_commerce"
-DB_USER="postgres"
-DB_PASSWORD = "your_password_here"
+# Database connection details
+DB_HOST = "localhost"
+DB_PORT = "5432"
+DB_NAME = "quick_commerce"
+DB_USER = "postgres"
+DB_PASSWORD = "password_here"  
 
-#Test connection using psycopg2
 def test_connection():
     try:
         conn = psycopg2.connect(
@@ -26,7 +23,6 @@ def test_connection():
     except Exception as e:
         print(f"❌ Connection failed: {e}")
 
-# Create SQLAlchemy engine (to save scraped data)
 def get_engine():
     engine = create_engine(
         "postgresql+psycopg2://",
@@ -40,7 +36,6 @@ def get_engine():
     )
     return engine
 
-# Test saving data to database
 def test_save():
     engine = get_engine()
     test_data = pd.DataFrame({
