@@ -1,13 +1,16 @@
+import os
+import pandas
+from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
-import pandas as pd
 
-# Database connection details
-DB_HOST = "localhost"
-DB_PORT = "5432"
-DB_NAME = "quick_commerce"
-DB_USER = "postgres"
-DB_PASSWORD = "ginnivinni100@" 
+load_dotenv()
+
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "5432")
+DB_NAME = os.getenv("DB_NAME", "quick_commerce")
+DB_USER = os.getenv("DB_USER", "postgres")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 def test_connection():
     try:
