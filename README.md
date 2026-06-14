@@ -1,45 +1,144 @@
-# Quick Commerce Pricing Intelligence 🛒
+# 🛒 Quick Commerce Pricing Intelligence
+### Zepto vs Blinkit — Price, Discount & Strategy Analysis
 
-A data engineering and analytics project tracking live pricing across Blinkit and Zepto — India's two largest quick commerce platforms.
+![Python](https://img.shields.io/badge/Python-3.13-blue) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.1-blue) ![Selenium](https://img.shields.io/badge/Scraping-Selenium-green) ![ML](https://img.shields.io/badge/ML-RandomForest-orange)
 
-## Background
+---
 
-Quick commerce has grown rapidly in India with Blinkit and Zepto competing aggressively for the same customers. I wanted to understand whether they actually price differently, and if so, why. This project collects daily pricing data automatically and analyses the patterns.
+## 📌 What I Built
 
-## What the data shows 📊
+I scraped, stored, and analyzed real pricing data from Blinkit and Zepto across 3 Indian cities over 10 days to figure out — are these platforms actually different in how they price things, or is it just perception?
 
-Collected 22,800+ product records across Delhi, Mumbai and Bangalore over multiple days. A few findings stood out:
+**Data collected:** June 5–14, 2026 | **49,184 products** | **3 cities** | **15 categories**
 
-Blinkit displays full MRP on every product with zero discounts. Zepto discounts nearly 90% of its catalog at an average 19% off. This suggests two fundamentally different pricing strategies — Blinkit competing on trust and convenience while Zepto competes on perceived value.
+---
 
-Zepto also maintains a nearly identical product catalog across all three cities (98% consistency) while Blinkit's catalog varies significantly by city (only 32% overlap). This points to a hyperlocal inventory model for Blinkit versus a standardised national approach for Zepto.
+## 🔍 What I Found
 
-A Random Forest classifier trained on category and price data predicts high-discount products on Zepto with 87% accuracy. Rice and dal show the highest discount probability at 82% and 81% respectively.
+### 1. They have completely different catalog strategies
+| Platform | Products Common Across Cities |
+|----------|-------------------------------|
+| Blinkit  | 32.41% — hyperlocal inventory |
+| Zepto    | 98.32% — same catalog everywhere |
 
-## How it works ⚙️
+Blinkit stocks different products in Delhi vs Mumbai vs Bangalore. Zepto sells the same things everywhere. That alone tells you a lot about how they think about the market.
 
-Data is collected daily using Selenium with Chrome DevTools Protocol for GPS spoofing across cities. Products are stored in PostgreSQL and matched across platforms using TF-IDF vectorization — which found 550 comparable products versus only 27 from exact string matching.
+### 2. Their discount strategies are polar opposites
+| Platform | Products Discounted | Avg Discount |
+|----------|---------------------|--------------|
+| Blinkit  | 0%                  | None         |
+| Zepto    | 89.9%               | 19.25%       |
 
-Analysis and modelling done in Jupyter. Results visualised in an interactive Power BI dashboard.
+Zepto looks cheaper — but that's because almost everything is discounted, not because base prices are lower. Blinkit charges full MRP on everything.
 
-## Stack 🛠️
+### 3. Category-wise, Zepto wins almost everywhere
+- Zepto cheapest on: **Tea (-42.8%)**, **Soap (-30.7%)**
+- Only category where Blinkit is cheaper: **Noodles (+1.58%)**
+- On matched products overall: **Zepto is 18.88% cheaper**
 
-Python, Selenium, PostgreSQL, SQLAlchemy, Pandas, Scikit-learn, Power BI, Windows Task Scheduler
+### 4. Blinkit prices move more aggressively day to day
+- Blinkit: Soap jumped **+17.3% in a single day**
+- Zepto: Max daily change was only **+4.66%**
 
-## Structure 📁
-scripts/          scraping and database utilities
-notebooks/        exploratory analysis and ML models
-dashboard/        Power BI dashboard file
-run_scraper.bat   daily automation script
-scripts/          scraping and database utilities
-notebooks/        exploratory analysis and ML models
-dashboard/        Power BI dashboard file
-run_scraper.bat   daily automation script
+This suggests they're running different pricing algorithms — Blinkit adjusts more frequently, Zepto stays stable.
 
-## Running locally
+---
 
-Clone the repo, install dependencies with pip install -r requirements.txt, configure your PostgreSQL credentials in db_connect.py and run the scrapers.
+## 🧠 ML Model — What I Actually Learned
 
-## Status 🔄
+I built 3 Random Forest models and the first two taught me something more useful than the actual predictions:
 
-Data collection is ongoing daily. Dashboard refresh and full analysis report planned after 20 days of data.
+| Model | Accuracy | What's actually happening |
+|-------|----------|--------------------------|
+| Model 1 (All data) | 96% | Just learned "Zepto = discount, Blinkit = no discount" — useless |
+| Model 2 (Zepto-only) | 88% | Still not useful — 89% of Zepto has discounts anyway |
+| **Model 3 (Predict HIGH discount >20%)** | **87.15%** | ✅ This one actually solves something |
+
+The 96% model looked impressive until I checked feature importance — platform alone was 79% of the signal. It wasn't predicting discounts, it was just identifying the platform. I rebuilt it as a Zepto-only model that predicts which products get deep discounts (>20%), which is actually useful for a consumer or a business.
+
+**Top features for predicting high discounts:** Price (76%) → Category (23%) → City (1%)
+
+---
+
+## 🔧 Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Scraping | Selenium + Python |
+| Database | PostgreSQL 18.1 |
+| Analysis | Pandas, NumPy |
+| Visualization | Matplotlib, Seaborn |
+| Product Matching | TF-IDF (cosine similarity) + RapidFuzz |
+| ML | Scikit-learn (Random Forest) |
+| Automation | Windows Batch Script (`run_scraper.bat`) |
+
+---
+
+## 📁 Project Structure
+
+```
+quick_commerce_pricing/
+├── notebooks/
+│   └── zepto_blinkit_analysis.ipynb   # Main analysis notebook
+├── scripts/
+│   ├── blinkit_scraper.py             # Blinkit Selenium scraper
+│   ├── zepto_scraper.py               # Zepto Selenium scraper
+│   ├── selenium_scraper.py            # Base scraper
+│   ├── export_data.py                 # Data export utilities
+│   └── db_connect_example.py          # DB connection template
+├── data/                              # Raw scraped data
+├── database/                          # DB schema and setup
+├── .env.example                       # Environment variables template
+├── .gitignore
+├── run_scraper.bat                    # One-click scraping automation
+└── README.md
+```
+
+---
+
+## ⚙️ Setup & Usage
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/khayatichaudhary/quick-commerce-pricing-intelligence.git
+cd quick-commerce-pricing-intelligence
+```
+
+### 2. Install dependencies
+```bash
+pip install pandas numpy matplotlib seaborn sqlalchemy psycopg2 selenium rapidfuzz scikit-learn python-dotenv
+```
+
+### 3. Configure environment
+```bash
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
+```
+
+### 4. Run scrapers
+```bash
+run_scraper.bat   # Windows
+# OR
+python scripts/blinkit_scraper.py
+python scripts/zepto_scraper.py
+```
+
+### 5. Run analysis
+Open `notebooks/zepto_blinkit_analysis.ipynb` in Jupyter.
+
+---
+
+## ⚠️ Honest Limitations
+
+- **Blinkit discount data**: My scraper recorded 0% discounts for Blinkit throughout the collection period. This could be their actual pricing strategy OR a scraping gap — I flagged it in the notebook and recommend manual verification on the app.
+- **Data period**: 10 days is enough to see trends but not enough for seasonal patterns.
+- **Quantity extraction**: Only 4.1% of products had quantities I could parse from the name — per-unit comparison has a small sample.
+- **Cities**: Only Delhi, Mumbai, Bangalore. Tier-2 cities would be interesting to add.
+
+---
+
+## 👩‍💻 Author
+
+**Khayati Chaudhary**  
+Chemical Engineering, MNNIT Allahabad | Aspiring Data Analyst  
+[GitHub](https://github.com/khayatichaudhary)
