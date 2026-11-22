@@ -52,7 +52,7 @@ I built 3 Random Forest models and the first two taught me something more useful
 |-------|----------|--------------------------|
 | Model 1 (All data) | 96% | Just learned "Zepto = discount, Blinkit = no discount" — useless |
 | Model 2 (Zepto-only) | 88% | Still not useful — 89% of Zepto has discounts anyway |
-| **Model 3 (Predict HIGH discount >20%)** | **87.15%** | ✅ This one actually solves something |
+| **Model 3 (Predict HIGH discount >20%)** | **87.15%** |This one is better|
 
 The 96% model looked impressive until I checked feature importance — platform alone was 79% of the signal. It wasn't predicting discounts, it was just identifying the platform. I rebuilt it as a Zepto-only model that predicts which products get deep discounts (>20%), which is actually useful for a consumer or a business.
 
